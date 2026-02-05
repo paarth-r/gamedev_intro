@@ -7,8 +7,13 @@ A small top-down chase game built with Pygame. The player (white) is pursued by 
 - Python 3.10+
 - [Pygame](https://www.pygame.org/) 2.0+
 
+## Getting Started
+
 ```bash
-pip install pygame-ce
+mkdir my_awesome_game
+cd my_awesome_game
+git clone https://github.com/paarth-r/gamedev_intro.git
+pip install -r requirements.txt
 ```
 
 ## Run
