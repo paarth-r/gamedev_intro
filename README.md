@@ -8,7 +8,7 @@ A small top-down chase game built with Pygame. The player (white) is pursued by 
 - [Pygame](https://www.pygame.org/) 2.0+
 
 ```bash
-pip install pygame
+pip install pygame-ce
 ```
 
 ## Run
