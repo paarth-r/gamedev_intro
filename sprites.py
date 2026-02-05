@@ -16,8 +16,22 @@ class Player(Sprite):
         self.vel = vec(0,0)
         self.pos = vec(x,y)
 
+    def _seek_mouse(self):
+        """Steer towards the mouse cursor; same chase/momentum feel as enemy."""
+        mouse_pos = vec(pg.mouse.get_pos())
+        to_mouse = mouse_pos - self.pos
+        dist_sq = to_mouse.length_squared()
+        if dist_sq < 1:
+            self.accel = vec(0, 0)
+            return
+        desired_vel = to_mouse.normalize() * settings.PLAYER_MAX_SPEED
+        steering = desired_vel - self.vel
+        if steering.length_squared() > settings.PLAYER_ACCELERATION ** 2:
+            steering.scale_to_length(settings.PLAYER_ACCELERATION)
+        self.accel = steering
+
     def get_keys(self):
-        """Set acceleration from input; diagonal is normalized so speed is consistent."""
+        """WASD: set acceleration from input; diagonal normalized."""
         self.accel = vec(0, 0)
         keys = pg.key.get_pressed()
         if keys[pg.K_w]:
@@ -32,7 +46,10 @@ class Player(Sprite):
             self.accel = self.accel.normalize() * settings.PLAYER_ACCELERATION
 
     def update(self, dt):
-        self.get_keys()
+        if self.game.mouse_control:
+            self._seek_mouse()
+        else:
+            self.get_keys()
         # Car-like: velocity accumulates from acceleration, friction slows you down
         self.vel += self.accel * dt
         # Friction (velocity decay)

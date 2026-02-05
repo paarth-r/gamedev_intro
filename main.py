@@ -5,7 +5,6 @@ Main game loop/module
 import pygame as pg
 import sys
 from os import path
-import utils
 import settings
 import math
 import sprites
@@ -19,7 +18,7 @@ class Game:
         self.load_data()
         self.running = True
         self.playing = True
-        self.cooldown = utils.Cooldown(5)
+        self.mouse_control = True  # toggled with space
         self.all_sprites = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.show_hud = True
@@ -42,8 +41,6 @@ class Game:
 
     def events(self):
         events = pg.event.get()
-        if self.cooldown.ready():
-            self.draw_text("Cooldown Ready!", 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4 + settings.TILESIZE * 3)
         for event in events:
             if event.type == pg.QUIT or (
                 event.type == pg.KEYDOWN 
@@ -53,7 +50,7 @@ class Game:
             if event.type == pg.KEYDOWN:
                 match event.key:
                     case pg.K_SPACE:
-                        self.cooldown.start()
+                        self.mouse_control = not self.mouse_control
                     case pg.K_SLASH:
                         self.show_hud = not self.show_hud
                     
@@ -72,8 +69,9 @@ class Game:
         if self.show_hud:
             self.draw_text("FPS", 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4 - settings.TILESIZE)
             self.draw_text(str(math.trunc(1/self.dt)), 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4)
-            self.draw_text("Intersecting", 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4 + settings.TILESIZE)
-            self.draw_text(str(self.player.check_collision_with_enemies()), 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4 + settings.TILESIZE * 2)
+            self.draw_text("Control: " + ("Mouse" if self.mouse_control else "WASD"), 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4 + settings.TILESIZE)
+            self.draw_text("Intersecting", 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4 + settings.TILESIZE * 2)
+            self.draw_text(str(self.player.check_collision_with_enemies()), 24, settings.WHITE, settings.WIDTH/2, settings.HEIGHT/4 + settings.TILESIZE * 3)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
     
